@@ -6,15 +6,15 @@
 <body>
   <h1>Top Results</h1>
   {% if results %}
-    <ul>
-    {% for r in results %}
-      <li>
-        <strong>{{ r.place }}</strong> ({{ r.city }}) – rating {{ "%.1f"|format(r.ratings_place) }}<br>
-        IR score: {{ "%.3f"|format(r.ir_score) }}, ML score: {{ "%.3f"|format(r.ml_score) }}<br>
-        Best time: {{ r.best_time_to_visit }} &middot; Duration: {{ r.ideal_duration }}
-      </li>
-    {% endfor %}
-    </ul>
+  <ul>
+  {% for r in results|sort(attribute='ml_score', reverse=True) %}
+    <li>
+      <strong>{{ r.place }}</strong> ({{ r.city }}) – rating {{ "%.1f"|format(r.ratings_place) }}<br>
+      IR score: {{ "%.3f"|format(r.ir_score) }}, ML score: {{ "%.3f"|format(r.ml_score) }}<br>
+      Best time: {{ r.best_time_to_visit }} &middot; Duration: {{ r.ideal_duration }}
+    </li>
+  {% endfor %}
+  </ul>
   {% else %}
     <p>No matches found.</p>
   {% endif %}

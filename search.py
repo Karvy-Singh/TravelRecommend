@@ -161,4 +161,4 @@ def filter_and_search(df: pd.DataFrame, uq: dict, apply_filters: bool):
 
     df['ml_score'] = reg.predict(Xc_new)
 
-    return df.sort_values('ml_score', ascending=False).head(top_n).reset_index(drop=True)
+    return df.head(top_n).reset_index(drop=True)
