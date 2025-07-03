@@ -211,14 +211,14 @@ def main():
     Xci = tfidf_global.transform(cands["city"])
     Xp  = tfidf_global.transform(cands["place"])
     dur_c = cands["ideal_duration"].apply(parse_duration).fillna(dur.mean())
+
+    #Numeric features
     Xn = csr_matrix(scaler.transform(dur_c.values.reshape(-1,1)))
 
     Xc_new = hstack([Xt, Xci, Xp, Xn]).tocsr()
 
-# 2. retrain your regressor on the new, wider matrix (and true ratings y)
     reg.fit(Xc_new, cands["ratings_place"])
 
-# 3. now predict
     cands["ml_score"] = reg.predict(Xc_new)
     # ML metrics
     y_ml = cands["ml_score"].values
