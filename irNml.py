@@ -11,6 +11,14 @@ from xgboost import XGBRegressor
 
 DATA_FILE = "famous_indian_tourist_places_3000.jsonl"
 
+MONTH_MAP = {
+    m.lower(): i for i, m in enumerate(
+        ["January","February","March","April","May","June",
+         "July","August","September","October","November","December"],
+        start=1
+    )
+}
+
 def parse_duration(s):
     """Return mean of '2-4' → 3.0, or float(s), else nan."""
     try:
@@ -58,7 +66,13 @@ df["combined_text"] = (
     df["place_desc"].fillna("") + " " + df["city_desc"].fillna("")
 ).str.strip()
 tfidf_global = TfidfVectorizer(stop_words="english", max_features=15_000)
+tfidf_city  = TfidfVectorizer(stop_words="english", max_features=2_000)\
+                  .fit(df["city"].fillna(""))
+tfidf_place = TfidfVectorizer(stop_words="english", max_features=2_000)\
+                  .fit(df["place"].fillna(""))
 X_text_full = tfidf_global.fit_transform(df["combined_text"])
+X_city_full  = tfidf_city.transform(df["city"].fillna(""))
+X_place_full = tfidf_place.transform(df["place"].fillna(""))
 
 # 3. Numeric feature: ideal duration
 dur = df["ideal_duration"].apply(parse_duration).fillna(df["ideal_duration"].apply(parse_duration).mean())
@@ -67,7 +81,7 @@ scaler = StandardScaler()
 X_num_full = csr_matrix(scaler.fit_transform(dur))
 
 # 4. Combine
-X_full = hstack([X_text_full, X_num_full]).tocsr()
+X_full = hstack([X_text_full,X_city_full,X_place_full, X_num_full]).tocsr()
 y_full = df["ratings_place"].astype(float).values
 
 # 5. Train regressor once
@@ -83,8 +97,6 @@ reg = XGBRegressor(
     n_jobs=4
 )
 reg.fit(X_full, y_full)
-
-from sklearn.feature_extraction.text import TfidfVectorizer
 
 def filter_and_search(df):
     df = df.copy()

@@ -100,8 +100,6 @@ reg = XGBRegressor(
 )
 reg.fit(X_full, y_full)
 
-from sklearn.feature_extraction.text import TfidfVectorizer
-
 def filter_and_search(df: pd.DataFrame, uq: dict, apply_filters: bool):
     df = df.copy()
     df['combined_text'] = (
