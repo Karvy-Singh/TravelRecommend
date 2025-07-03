@@ -18,6 +18,25 @@
   {% else %}
     <p>No matches found.</p>
   {% endif %}
+
+  <h2>Evaluation Metrics</h2>
+  <p>
+    <strong>IR‐only:</strong>
+    NDCG@{{ metrics.K }} {{ "%.4f"|format(metrics.ir_ndcg) }},
+    PRECISION@{{ metrics.K }} {{ "%.4f"|format(metrics.ir_precision) }},
+    RECALL@{{ metrics.K }} {{ "%.4f"|format(metrics.ir_recall) }},
+    MAP@{{ metrics.K }} {{ "%.4f"|format(metrics.ir_map) }},
+    F-MEASURE@{{ metrics.K }} {{ "%.4f"|format(metrics.ir_F_measure) }},
+  </p>
+  <p>
+    <strong>ML‐ranker:</strong>
+    NDCG@{{ metrics.K }} {{ "%.4f"|format(metrics.ml_ndcg) }},
+    PRECISION@{{ metrics.K }} {{ "%.4f"|format(metrics.ml_precision) }},
+    RECALL@{{ metrics.K }} {{ "%.4f"|format(metrics.ml_recall) }},
+    MAP@{{ metrics.K }} {{ "%.4f"|format(metrics.ml_map) }},
+    F-MEASURE@{{ metrics.K }} {{ "%.4f"|format(metrics.ml_F_measure) }},
+  </p>
+  <hr>
   <p><a href="{{ url_for('index') }}">← New search</a></p>
 </body>
 </html>
