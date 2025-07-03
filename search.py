@@ -2,8 +2,10 @@ import numpy as np
 import pandas as pd
 
 from pathlib import Path
+from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import mean_squared_error
 from sklearn.metrics.pairwise import cosine_similarity
 from scipy.sparse import hstack, csr_matrix
 
@@ -51,42 +53,65 @@ def in_month_range(range_str, month_str):
         if start <= end:
             return start <= target <= end
         else:
-            # e.g. October (10) → June (6): wrap around year end
+            # wrap around end of year
             return target >= start or target <= end
     else:
-        # single month or free‐text match
         return t in range_str.lower()
 
 
 # 1. Read full data
 df = pd.read_json(DATA_FILE, lines=True)
 
-# 2. Text feature
-df["combined_text"] = (
-    df["place_desc"].fillna("") + " " + df["city_desc"].fillna("")
-).str.strip()
+# 2. Train/test split
+train_df, test_df = train_test_split(df, test_size=0.2, random_state=42, shuffle=True)
+
+# 3. Prepare combined text
+for d in (train_df, test_df):
+    d["combined_text"] = (
+        d["place_desc"].fillna("") + " " + d["city_desc"].fillna("")
+    ).str.strip()
+
+# 4. Text vectorizers (fit on train only)
 tfidf_global = TfidfVectorizer(stop_words="english", max_features=15_000)
+tfidf_global.fit(train_df["combined_text"])
 
-tfidf_city  = TfidfVectorizer(stop_words="english", max_features=2_000)\
-                  .fit(df["city"].fillna(""))
-tfidf_place = TfidfVectorizer(stop_words="english", max_features=2_000)\
-                  .fit(df["place"].fillna(""))
-X_text_full = tfidf_global.fit_transform(df["combined_text"])
-X_city_full  = tfidf_city.transform(df["city"].fillna(""))
-X_place_full = tfidf_place.transform(df["place"].fillna(""))
+tfidf_city  = TfidfVectorizer(stop_words="english", max_features=2_000)
+tfidf_city.fit(train_df["city"].fillna(""))
 
+tfidf_place = TfidfVectorizer(stop_words="english", max_features=2_000)
+tfidf_place.fit(train_df["place"].fillna(""))
 
-# 3. Numeric feature: ideal duration
-dur = df["ideal_duration"].apply(parse_duration).fillna(df["ideal_duration"].apply(parse_duration).mean())
-dur = dur.values.reshape(-1, 1)
+# 5. Transform train/test
+X_text_train = tfidf_global.transform(train_df["combined_text"])
+X_text_test  = tfidf_global.transform(test_df["combined_text"])
+
+X_city_train = tfidf_city.transform(train_df["city"].fillna(""))
+X_city_test  = tfidf_city.transform(test_df["city"].fillna(""))
+
+X_place_train = tfidf_place.transform(train_df["place"].fillna(""))
+X_place_test  = tfidf_place.transform(test_df["place"].fillna(""))
+
+# 6. Numeric feature: ideal duration
+dur_train = train_df["ideal_duration"].apply(parse_duration)
+dur_test  = test_df["ideal_duration"].apply(parse_duration)
+
+# fill any NaNs in train with train‐mean, same for test
+mean_dur = dur_train.mean()
+dur_train = dur_train.fillna(mean_dur)
+dur_test  = dur_test.fillna(mean_dur)
+
 scaler = StandardScaler()
-X_num_full = csr_matrix(scaler.fit_transform(dur))
+X_num_train = csr_matrix(scaler.fit_transform(dur_train.values.reshape(-1, 1)))
+X_num_test  = csr_matrix(scaler.transform(dur_test.values.reshape(-1, 1)))
 
-# 4. Combine
-X_full = hstack([X_text_full,X_city_full,X_place_full, X_num_full]).tocsr()
-y_full = df["ratings_place"].astype(float).values
+# 7. Combine all features
+X_train = hstack([X_text_train, X_city_train, X_place_train, X_num_train]).tocsr()
+X_test  = hstack([X_text_test,  X_city_test,  X_place_test,  X_num_test ]).tocsr()
 
-# 5. Train regressor once
+y_train = train_df["ratings_place"].astype(float).values
+y_test  = test_df["ratings_place"].astype(float).values
+
+# 8. Train regressor
 reg = XGBRegressor(
     tree_method="hist",
     max_bin=128,
@@ -98,7 +123,12 @@ reg = XGBRegressor(
     random_state=42,
     n_jobs=4
 )
-reg.fit(X_full, y_full)
+reg.fit(X_train, y_train)
+
+# 9. Evaluate on test set
+y_pred = reg.predict(X_test)
+rmse = np.sqrt(mean_squared_error(y_test, y_pred))
+print(f"Test RMSE: {rmse:.3f}")
 
 def filter_and_search(df: pd.DataFrame, uq: dict, apply_filters: bool):
     df = df.copy()
@@ -122,8 +152,8 @@ def filter_and_search(df: pd.DataFrame, uq: dict, apply_filters: bool):
             try:
                 max_d = int(uq['duration_max'])
                 df = df[df['ideal_duration']
-                        .apply(lambda s: (parse_duration(s)[1] is not None)
-                                       and (parse_duration(s)[1] <= max_d))]
+                        .apply(lambda s: (parse_duration(s) is not None)
+                                       and (parse_duration(s) <= max_d))]
             except ValueError:
                 pass
         if uq.get('month'):
@@ -148,15 +178,15 @@ def filter_and_search(df: pd.DataFrame, uq: dict, apply_filters: bool):
     except ValueError:
         top_n = 10
 
-    # prepare features
-    y_true = df["ratings_place"].astype(float)
+    # prepare features using the global/train‐fitted transformers
     Xt  = tfidf_global.transform(df["combined_text"])
-    Xci = tfidf_city.transform(df["city"])
-    Xp  = tfidf_place.transform(df["place"])
-    dur_c = df["ideal_duration"].apply(parse_duration).fillna(dur.mean())
+    Xci = tfidf_city.transform(df["city"].fillna(""))
+    Xp  = tfidf_place.transform(df["place"].fillna(""))
+    dur_c = df["ideal_duration"].apply(parse_duration).fillna(mean_dur)
     Xn = csr_matrix(scaler.transform(dur_c.values.reshape(-1,1)))
     Xc_new = hstack([Xt, Xci, Xp, Xn]).tocsr()
 
     df['ml_score'] = reg.predict(Xc_new)
 
     return df.head(top_n).reset_index(drop=True)
+
