@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+<head>
+  <title>Place Search</title>
+</head>
+<body>
+  <h1>Search Places</h1>
+  <form method="post">
+    <label>
+      <input type="checkbox" name="apply_filters">
+      Apply hard filters
+    </label>
+    <fieldset>
+      <legend>Hard filters</legend>
+      <label>City: <input type="text" name="city"></label><br>
+      <label>Place: <input type="text" name="place"></label><br>
+      <label>Min Rating: <input type="text" name="rating_min"></label><br>
+      <label>Max Duration (days): <input type="text" name="duration_max"></label><br>
+      <label>Month: <input type="text" name="month"></label>
+    </fieldset>
+    <fieldset>
+      <legend>IR / ML settings</legend>
+      <label>Keywords: <input type="text" name="keywords"></label><br>
+      <label>Top N results: <input type="number" name="top_n" value="10"></label>
+    </fieldset>
+    <button type="submit">Search</button>
+  </form>
+</body>
+</html>
+
