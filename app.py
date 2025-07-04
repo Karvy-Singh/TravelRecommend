@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 from urllib.parse import urlencode
 from search import filter_and_search
+from getimg import fetch_wiki_images
 from metrics import (
     ndcg_at_k,
     precision_recall_at_k,
@@ -19,7 +20,6 @@ df_master['id'] = df_master.index
 
 @app.route('/', methods=['GET'])
 def index():
-    # Just show the search form
     return render_template('index.html')
 
 
@@ -42,7 +42,6 @@ def results():
         qs = urlencode({k: v for k, v in uq.items() if v})
         return redirect(f"{url_for('results')}?{qs}")
 
-    # --- GET: actually run the search based on querystring ---
     apply_filters = request.args.get('apply_filters') == '1'
     uq = {
         'city':         request.args.get('city', ''),
@@ -93,13 +92,17 @@ def results():
 def detail(result_id):
     row = df_master[df_master['id'] == result_id]
     if row.empty:
-        # if someone fakes an ID, send them back to the results page
         return redirect(url_for('results'))
     result = row.squeeze().to_dict()
+    images = []
+    place = result["city"]
+    images = fetch_wiki_images(place, limit=5)
+    print(images)
     # pass along the original query args so the "Back" link can restore them
     return render_template('details.html',
                            result=result,
-                           query_args=request.args)
+                           query_args=request.args,
+                           images=images)
 
 
 if __name__ == '__main__':
