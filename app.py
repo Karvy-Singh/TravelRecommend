@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 from urllib.parse import urlencode
 from search import filter_and_search
-from getimg import fetch_wiki_images
+from getimg import fetch_google_images
 from metrics import (
     ndcg_at_k,
     precision_recall_at_k,
@@ -95,8 +95,8 @@ def detail(result_id):
         return redirect(url_for('results'))
     result = row.squeeze().to_dict()
     images = []
-    place = result["city"]
-    images = fetch_wiki_images(place, limit=5)
+    place = result["city"]+","+result["place"]
+    images = fetch_google_images(place, limit=5)
     print(images)
     # pass along the original query args so the "Back" link can restore them
     return render_template('details.html',

@@ -1,34 +1,34 @@
 import requests
 
-def fetch_wiki_images(page_title: str, limit: int = 5):
-    S = requests.Session()
-    URL = "https://en.wikipedia.org/w/api.php"
-    # 1) get all image titles on that page
-    params = {
-        "action": "query",
-        "titles": page_title,
-        "prop": "images",
-        "format": "json",
-        "imlimit": limit
-    }
-    r = S.get(URL, params=params).json()
-    pages = next(iter(r["query"]["pages"].values()))
-    titles = [img["title"] for img in pages.get("images", [])]
+def is_valid_image_url(url: str) -> bool:
+    try:
+        response = requests.head(url, timeout=5, allow_redirects=True)
+        content_type = response.headers.get("Content-Type", "")
+        return response.status_code == 200 and content_type.startswith("image/")
+    except requests.RequestException:
+        return False
 
-    # 2) fetch their direct URLs
+def fetch_google_images(query: str, limit: int = 5):
+    API_KEY = "AIzaSyAx0g4SAJmUGgUoU2soXAY0YZmr2_Ia3JE"
+    CX = "b332fc4cf2f664bac"
+    search_url = "https://www.googleapis.com/customsearch/v1"
     params = {
-        "action": "query",
-        "titles": "|".join(titles),
-        "prop": "imageinfo",
-        "iiprop": "url",
-        "format": "json"
+        "q": query,
+        "cx": CX,
+        "key": API_KEY,
+        "searchType": "image",
+        "num": limit
     }
-    r = S.get(URL, params=params).json()
-    out = []
-    for p in r["query"]["pages"].values():
-        info = p.get("imageinfo", [])
-        if info:
-            out.append(info[0]["url"])
-    return out
- 
+
+    response = requests.get(search_url, params=params)
+    response.raise_for_status()
+    data = response.json()
+
+    raw_image_urls = [item["link"] for item in data.get("items", [])]
+    valid_image_urls = [url for url in raw_image_urls if is_valid_image_url(url)]
+
+    return valid_image_urls
+
+
+
 

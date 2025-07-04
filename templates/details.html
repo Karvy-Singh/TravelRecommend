@@ -31,14 +31,16 @@
       <p><strong>Distance from City:</strong> {{ result.distance }} km</p>
     </div>
 
-    {# Image gallery provision #}
     {% if images %}
       <div class="image-gallery">
         {% for url in images %}
-          <img src="{{ url }}" alt="{{ result.place }} image">  
+          <a href="{{ url }}" data-lightbox="gallery" data-title="{{ result.place }}">
+            <img src="{{ url }}" alt="{{ result.place }} image" style="width:150px; margin: 5px;">
+          </a>
         {% endfor %}
       </div>
     {% endif %}
+
 
     <div class="description">
       <p><strong>City description:</strong> {{ result.city_desc }}</p>
