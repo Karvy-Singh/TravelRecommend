@@ -27,10 +27,11 @@
       <p><strong>Rating:</strong> {{ "%.1f"|format(result.ratings_place) }}</p>
       <p><strong>Best Time to Visit:</strong> {{ result.best_time_to_visit }}</p>
       <p><strong>Ideal Duration:</strong> {{ result.ideal_duration }} days</p>
+      <p><strong>Distance from City::</strong> {{ result.distance }} days</p>
     </div>
     <div class="description">
-      <p><strong>city description</strong> {{ result.city_desc }}</p>
-      <p><strong>place description</strong> {{ result.place_desc }}</p>
+      <p><strong>City description:</strong> {{ result.city_desc }}</p>
+      <p><strong>Place description:</strong> {{ result.place_desc }}</p>
     </div>
     <a class="back-link" href="{{ url_for('results') }}">← Back to results</a>
   </div>
