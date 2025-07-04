@@ -1,6 +1,7 @@
 # app.py
 from flask import Flask, render_template, request, redirect, url_for
 import pandas as pd
+import numpy as np
 from urllib.parse import urlencode
 from search import filter_and_search
 from metrics import (
@@ -59,16 +60,20 @@ def results():
     # compute metrics
     K      = len(results_df)
     y_true = results_df["ratings_place"].astype(float).values
+    y_rel  = (y_true >= 4.0).astype(int)
+    order = np.argsort(results_df["ir_score"].values)[::-1]
+    y_rel_sorted = y_rel[order]
+    y_grad_sorted = y_true[order]
     y_ir   = results_df["ir_score"].astype(float).values
     y_ml   = results_df["ml_score"].astype(float).values
 
     metrics = {
         "K":            K,
-        "ir_ndcg":      ndcg_at_k(y_true, y_ir, K),
-        "ir_precision": precision_recall_at_k(y_true, y_ir, K)[0],
-        "ir_recall":    precision_recall_at_k(y_true, y_ir, K)[1],
-        "ir_map":       average_precision_at_k(y_true, y_ir, K),
-        "ir_F_measure": f_measure_at_k(y_true, y_ir, K),
+        "ir_ndcg":      ndcg_at_k(y_rel_sorted, y_ir, K),
+        "ir_precision": precision_recall_at_k(y_grad_sorted, y_ir, K)[0],
+        "ir_recall":    precision_recall_at_k(y_grad_sorted, y_ir, K)[1],
+        "ir_map":       average_precision_at_k(y_grad_sorted, y_ir, K),
+        "ir_F_measure": f_measure_at_k(y_grad_sorted, y_ir, K),
         "ml_ndcg":      ndcg_at_k(y_true, y_ml, K),
         "ml_precision": precision_recall_at_k(y_true, y_ml, K)[0],
         "ml_recall":    precision_recall_at_k(y_true, y_ml, K)[1],
