@@ -1,30 +1,53 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Place Search</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 0; font-family: 'Roboto', sans-serif; background: url('../6345959.jpg') no-repeat center center/cover; position: relative; }
+    .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); }
+    .container { position: relative; z-index: 1; max-width: 600px; margin: 60px auto; background: rgba(255,255,255,0.9); border-radius: 10px; padding: 30px 40px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
+    h1 { text-align: center; color: #333; margin-bottom: 20px; }
+    form { display: grid; gap: 20px; }
+    .apply-filters { display: flex; align-items: center; }
+    .apply-filters input { margin-right: 10px; transform: scale(1.2); }
+    fieldset { border: 1px solid #ccc; border-radius: 5px; padding: 15px; }
+    legend { font-weight: 700; padding: 0 10px; }
+    label { display: flex; flex-direction: column; color: #555; }
+    label input[type="text"], label input[type="number"] { margin-top: 8px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; outline: none; transition: border-color 0.3s; }
+    label input[type="text"]:focus, label input[type="number"]:focus { border-color: #ff6b6b; }
+    button { width: 100%; padding: 12px; border: none; border-radius: 5px; background: #ff6b6b; color: #fff; font-size: 1rem; cursor: pointer; transition: background 0.3s; }
+    button:hover { background: #ff4757; }
+  </style>
 </head>
 <body>
-  <h1>Search Places</h1>
-  <form method="post">
-    <label>
-      <input type="checkbox" name="apply_filters">
-      Apply hard filters
-    </label>
-    <fieldset>
-      <legend>Hard filters</legend>
-      <label>City: <input type="text" name="city"></label><br>
-      <label>Place: <input type="text" name="place"></label><br>
-      <label>Min Rating: <input type="text" name="rating_min"></label><br>
-      <label>Max Duration (days): <input type="text" name="duration_max"></label><br>
-      <label>Month: <input type="text" name="month"></label>
-    </fieldset>
-    <fieldset>
-      <legend>IR / ML settings</legend>
-      <label>Keywords: <input type="text" name="keywords"></label><br>
-      <label>Top N results: <input type="number" name="top_n" value="10"></label>
-    </fieldset>
-    <button type="submit">Search</button>
-  </form>
+  <div class="overlay"></div>
+  <div class="container">
+    <h1>Search Places</h1>
+    <form action="{{ url_for('results') }}" method="post">
+      <label class="apply-filters">
+        <input type="checkbox" name="apply_filters">
+        Apply hard filters
+      </label>
+      <fieldset>
+        <legend>Hard filters</legend>
+        <label>City: <input type="text" name="city" placeholder="e.g. Srinagar"></label>
+        <label>Place: <input type="text" name="place" placeholder="e.g. Dal Lake"></label>
+        <label>Min Rating: <input type="text" name="rating_min" placeholder="e.g. 4.0"></label>
+        <label>Max Duration (days): <input type="number" name="duration_max" placeholder="e.g. 3"></label>
+        <label>Month: <input type="text" name="month" placeholder="e.g. July"></label>
+      </fieldset>
+      <fieldset>
+        <legend>IR / ML settings</legend>
+        <label>Keywords: <input type="text" name="keywords" placeholder="e.g. art history, guided tour"></label>
+        <label>Top N results: <input type="number" name="top_n" value="10"></label>
+      </fieldset>
+      <button type="submit">Search</button>
+    </form>
+  </div>
 </body>
 </html>
 

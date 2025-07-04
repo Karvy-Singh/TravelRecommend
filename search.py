@@ -111,24 +111,38 @@ X_test  = hstack([X_text_test,  X_city_test,  X_place_test,  X_num_test ]).tocsr
 y_train = train_df["ratings_place"].astype(float).values
 y_test  = test_df["ratings_place"].astype(float).values
 
+X_tr, X_val, y_tr, y_val = train_test_split(X_train, y_train, test_size=0.15, random_state=42)
+
 # 8. Train regressor
 reg = XGBRegressor(
     tree_method="hist",
     max_bin=128,
     n_estimators=200,
-    learning_rate=0.15,
-    max_depth=6,
-    subsample=0.9,
-    colsample_bytree=0.8,
+    learning_rate=0.05,
+    max_depth=4,
+    subsample=0.8,
+    colsample_bytree=0.6,
+    min_child_weight=5,
+    gamma=0.2,
+    reg_alpha=0.3,
+    reg_lambda=2.0,
     random_state=42,
     n_jobs=4
 )
-reg.fit(X_train, y_train)
 
+reg.fit(
+    X_tr, y_tr,
+    eval_set=[(X_val, y_val)],
+    verbose=False
+)
 # 9. Evaluate on test set
 y_pred = reg.predict(X_test)
 rmse = np.sqrt(mean_squared_error(y_test, y_pred))
 print(f"Test RMSE: {rmse:.3f}")
+
+y_train_pred = reg.predict(X_train)
+train_rmse = np.sqrt(mean_squared_error(y_train, y_train_pred))
+print(f"Train RMSE: {train_rmse:.3f}")
 
 def filter_and_search(df: pd.DataFrame, uq: dict, apply_filters: bool):
     df = df.copy()
