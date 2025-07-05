@@ -1,0 +1,352 @@
+\documentclass[12pt,a4paper]{report}
+
+%-----------------------------------------------------------------------------%
+%                       Required Packages                                    %
+%-----------------------------------------------------------------------------%
+\usepackage[utf8]{inputenc}     % For UTF-8 input
+\usepackage[T1]{fontenc}        % For proper font encoding
+\usepackage{amsmath,amsfonts,amssymb}  % For math
+\usepackage{url}
+
+
+%-----------------------------------------------------------------------------%
+%                       Required Packages                                    %
+%-----------------------------------------------------------------------------%
+\usepackage[utf8]{inputenc}     % For UTF-8 input
+\usepackage[T1]{fontenc}        % For proper font encoding
+\usepackage{amsmath,amsfonts,amssymb}  % For math
+\usepackage{graphicx}           % For including images
+\usepackage[left=2.5cm,right=2.5cm,top=2.5cm,bottom=2.5cm]{geometry} % Page margins
+\usepackage{fancyhdr}           % For custom headers/footers
+\usepackage{hyperref}           % For clickable links and PDF metadata
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  filecolor=magenta,
+  urlcolor=cyan,
+  pdftitle={Summer Internship Report},
+  pdfauthor=,
+  pdfsubject={Summer Internship},
+  pdfkeywords={Internship, Report, JIIT, Computer Science}
+}
+% \hypersetup{hidelinks}        % Or uncomment this line instead to hide all link colours/boxes
+
+\usepackage{longtable}          % For tables spanning multiple pages
+\usepackage{url}                % For formatting URLs
+\usepackage{setspace}           % For line spacing
+\usepackage{float}              % For better control over floats
+\usepackage{caption}            % For customizing captions
+\usepackage{subcaption}         % For sub-figures
+\usepackage{xcolor}             % For coloured text
+
+%-----------------------------------------------------------------------------%
+%                           Line Spacing                                     %
+%-----------------------------------------------------------------------------%
+\onehalfspacing  % 1.5 line spacing
+
+%-----------------------------------------------------------------------------%
+%                        Header and Footer                                   %
+%-----------------------------------------------------------------------------%
+\pagestyle{fancy}
+\fancyhf{}                          % clear header/footer
+\fancyhead[L]{Summer Internship Report}
+\fancyhead[R]{\thepage}
+\fancyfoot[C]{JIIT Noida}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+%-----------------------------------------------------------------------------%
+%                       Custom Metadata Commands                             %
+%-----------------------------------------------------------------------------%
+\newcommand{\projecttitle}{[Your Project Title]}
+\newcommand{\studentname}{[Your Name]}
+\newcommand{\enrollmentnumber}{[Your Enrollment Number]}
+\newcommand{\internshipduration}{June 9\,--\,July 5, 2025}
+\newcommand{\mentorname}{[Faculty / Industry Mentor's Name]}
+\newcommand{\mentordesignation}{[Designation]}
+\newcommand{\mentordepartment}{[Department]}
+\newcommand{\organizationname}{[Name of Organisation where internship is carried out]}
+
+%-----------------------------------------------------------------------------%
+%                             Document Begins                                %
+%-----------------------------------------------------------------------------%
+\begin{document}
+
+%-------------------------------- Cover Page ---------------------------------%
+\begin{titlepage}
+	\centering
+	    
+	\Huge
+	\textbf{SUMMER INTERNSHIP REPORT} \\
+	\Large
+	\textbf{Computer Science and Engineering  }\\
+  \textbf{JIIT Noida}\\
+	\vspace{0.5cm}
+	\vspace*{\fill}
+	    
+	\includegraphics[scale=0.2]{jiit_logo}\\
+	    
+	\vspace{0.5cm}
+	\textbf{B TECH – Ist Year }\\
+	\textbf{(2-Credit Internship)}\\
+	\textbf{Travel Buddy: Travel Recommendation System}\\
+	\vspace{1cm}
+	
+  {\small
+  \textbf{Submitted by}\\
+	\begin{tabular}{ll}
+		Karvy Singh      & 2401030234 \\
+		Tanishka Singh     & J992401210097 \\
+		Harshit Shukla  & 2401200047 \\ 
+        Jayant Singh & J992401040089 \\
+        Prasoon Sharma & J992401210051 \\
+	\end{tabular}
+    \vspace{0.5cm}
+    }
+
+    {\small
+    \textbf{Internship Duration:} June 9 - July 5, 2025 \\
+    \vspace{0.5cm}
+    \textbf{Submitted to}\\
+    Dr. Neetu Singh \\
+    Dr. Imraan Rasheed  \\
+    Dr. Kirti Aggarwal \\
+    }
+
+\end{titlepage}
+
+%-------------------------------- Declaration ------------------------------%
+\newpage
+\thispagestyle{empty}
+\section*{Declaration}
+\addcontentsline{toc}{section}{Declaration}
+
+I hereby declare that the Summer Internship Report titled “Travel Buddy: Travel Recommendation System” is the outcome of my own work, carried out under the guidance of-\\
+Dr. Neetu Singh\\	
+Dr. Imraan Rasheed  \\
+Dr. Kirti Aggarwal  \\
+and has not been submitted elsewhere for any other academic purpose.
+
+\vspace{3cm}
+\noindent
+\begin{tabular}{@{}l@{\quad}l}
+  Name of Student: & Karvy Singh \\
+  Signature:       & \rule{4cm}{0.4pt} \\
+  Date:            & \rule{4cm}{0.4pt}
+\end{tabular}
+
+%-------------------------------- Certificate ------------------------------%
+\newpage
+\thispagestyle{empty}
+\section*{Certificate}
+\addcontentsline{toc}{section}{Certificate}
+
+This is to certify that Karvy Singh, Roll No. 2401030234, has successfully completed the Summer Internship Project titled “Travel Buddy: Travel Recommendation System” during the period June 9 – July 5, 2025 under my supervision.
+
+\vspace{2cm}
+\noindent
+\begin{tabular}{@{}l@{\quad}l}
+  Mentor’s Name:   & \rule{4cm}{0.4pt}\\
+  Designation:     & \rule{4cm}{0.4pt} \\
+  Department:      & \rule{4cm}{0.4pt} \\
+  Organisation:    & \rule{4cm}{0.4pt} \\
+  Signature:       & \rule{4cm}{0.4pt}
+\end{tabular}
+
+%---------------------------- Acknowledgement -----------------------------%
+\newpage
+\thispagestyle{empty}
+\section*{Acknowledgement}
+\addcontentsline{toc}{section}{Acknowledgement}
+
+I express my sincere gratitude to my mentor-\\ 
+Dr. Neetu Singh\\	
+Dr. Imraan Rasheed  \\
+Dr. Kirti Aggarwal  \\
+for their invaluable guidance and support throughout this internship. I also thank Jaypee Institute of Information Technology for the opportunity to work on this project, and my family and friends for their encouragement.
+
+%--------------------------- Table of Contents ----------------------------%
+\newpage
+\tableofcontents
+\newpage
+
+%-----------------------------------------------------------------------------%
+%                              Main sections                                 %
+%-----------------------------------------------------------------------------%
+\newpage
+\section{Introduction}
+Travelers often find it overwhelming to search for suitable tourist spots due to the abundance of options available. The diversity in preferences and lack of personalized suggestions further complicates their decision-making process, so for more personalized recommendations, so we made recommendation system that uses IR+ML to give you details of travel destinations fromthe our dataset consisting of ~3000 entries, along with some pictures from net.
+
+\newpage
+\section{Objectives of the Internship}
+
+\begin{itemize}
+  \item Understand Core IR Concepts
+\begin{itemize}
+
+
+  \item Study and implement ranking and retrieval metrics.
+
+\item Analyze search engine behavior and document relevance.
+\end{itemize}
+
+
+\item Apply Machine Learning to IR Tasks
+\begin{itemize}
+
+\item Use supervised models to improve ranking or classification.
+
+\item Train and evaluate models on real-world datasets.
+\end{itemize}
+
+
+\item Explore Feature Engineering and Model Evaluation
+\begin{itemize}
+
+\item Extract meaningful features (e.g., TF-IDF).
+
+\item Evaluate models with appropriate metrics (e.g., MAP, NDCG, F1).
+\end{itemize}
+
+
+\item Build End-to-End IR or ML Pipelines
+\begin{itemize}
+
+\item Preprocessing, model training, evaluation, and reporting.
+
+\item Automate workflows where possible (e.g., using scikit-learn or PyTorch).
+\end{itemize}
+
+
+\item Gain Practical Experience
+\begin{itemize}
+
+\item Work with real datasets (text, tabular, etc.).
+
+\item Contribute to team projects or research-oriented tasks.
+\end{itemize}
+
+\end{itemize}
+
+\newpage
+\section{Company/Problem Overview}
+Sites like MakeMyTrip focus on hotels, prices, journey but we lack sites recommending which place to visit as per your interest, for that we need to use old-school google search, which does not allow you to put in filters for more personalized recommendations, so we made recommendation system that uses IR+ML to give you details of travel destinations from the our dataset, with photos from the net,  along with simple sober and yet better interface for interaction.
+
+\newpage
+\section{Tools and Technologies Used}
+\begin{itemize}
+  \item Neovim editor
+  \item Python
+      \begin{itemize}
+          
+            \item flask==2.3.3
+              
+            \item numpy==1.26.4
+              
+            \item pandas==2.2.2
+            \item scikit-learn==1.4.2
+            \item scipy==1.13.1
+          \item xgboost==2.0.3
+          \item requests==2.32.3
+      \end{itemize}
+  \item Deployment app
+\end{itemize}
+
+\newpage
+\section{Weekly Progress Summary}
+\begin{itemize}
+
+  \item Week 1: Foundations of Information Retrieval
+Studied IR systems, text preprocessing (tokenization, stopword removal, stemming, lemmatization), inverted index construction, retrieval models (Boolean, Vector Space, TF-IDF), similarity metrics (Cosine, Jaccard, Euclidean), and evaluation metrics (Precision, Recall, F1-score, MAP, NDCG).
+
+ \item Week 2: Machine Learning for IR
+Explored the role of ML in IR (ranking, classification, recommendations), implemented Naive Bayes for document classification, used Scikit-learn for model building, and studied feature engineering (lexical, semantic, behavioral).
+
+ \item Week 3: Learning to Rank and Recommendation Systems
+Learned about learning-to-rank approaches (pointwise, pairwise, listwise), RankNet and LambdaMART, embedding-based retrieval (word/sentence embeddings), and recommendation techniques (content-based, collaborative filtering).
+
+Week 4: Project Week
+Built an end-to-end IR+ML system including text preprocessing, TF-IDF ranking, document classification, and evaluation using IR metrics. Integrated concepts from previous weeks into a working prototype.
+\end{itemize}
+
+\newpage
+\section{System Design / Workflow / Architecture}
+
+\newpage
+\section{Implementation Details}
+
+\newpage
+\section{Screenshots / Code Snapshots / Output Samples}
+
+\newpage
+\section{Challenges Faced and Solutions}
+
+\newpage
+\section{Key Learnings}
+\begin{enumerate}
+    \item \textbf{Foundations of Information Retrieval}
+    \begin{itemize}
+        \item Understood how IR systems function, focusing on preprocessing techniques such as tokenization, stopword removal, stemming, and lemmatization.
+        \item Built an inverted index for efficient document retrieval.
+        \item Applied retrieval models including Boolean, Vector Space, and TF-IDF.
+        \item Used similarity metrics like Cosine, Jaccard, and Euclidean distance to assess document relevance.
+        \item Evaluated system performance using metrics such as Precision, Recall, F1-score, MAP, and NDCG.
+    \end{itemize}
+    
+    \item \textbf{Machine Learning for IR}
+    \begin{itemize}
+        \item Explored how ML enhances IR through classification and ranking tasks.
+        \item Implemented Naive Bayes for document classification using Scikit-learn.
+        \item Conducted feature engineering using lexical, semantic, and behavioral features to improve model effectiveness.
+    \end{itemize}
+    
+    \item \textbf{Learning to Rank and Recommendations}
+    \begin{itemize}
+        \item Studied learning-to-rank methods: pointwise, pairwise, and listwise approaches.
+        \item Learned ranking models such as RankNet and LambdaMART.
+        \item Applied embedding-based retrieval using word and sentence embeddings for semantic search.
+        \item Developed recommendation systems using content-based and collaborative filtering techniques.
+    \end{itemize}
+    
+    \item \textbf{End-to-End System Development}
+    \begin{itemize}
+        \item Designed and implemented a full IR+ML pipeline, including preprocessing, ranking, classification, and evaluation.
+        \item Integrated diverse models into a functional travel recommendation application.
+        \item Focused on user experience by building a clean, intuitive interface for personalized destination suggestions.
+    \end{itemize}
+\end{enumerate}
+
+\newpage
+\section{Conclusion}
+Over four weeks, we explored the core principles and practical applications of Information Retrieval (IR) and Machine Learning (ML) to build a travel recommendation system that goes beyond conventional platforms like MakeMyTrip. Unlike traditional travel sites that focus mainly on logistics, our system focuses on personalized destination recommendations based on user interests, using techniques like TF-IDF ranking, classification models, and similarity metrics. By integrating IR techniques with ML-driven classification and ranking algorithms, we created a user-friendly prototype that retrieves relevant travel destinations and displays them with images and contextual insights, enhancing user experience and engagement.
+
+\newpage
+\section{References}
+\begin{thebibliography}{6}
+
+\bibitem{Dataset}
+Dataset. \url{https://www.kaggle.com/datasets/naqibahmedkadri/famous-indian-tourist-places}
+
+\bibitem{flask}
+Flask Documentation. \url{https://flask.palletsprojects.com/}
+
+\bibitem{xgboost}
+XGBoost Documentation. \url{https://xgboost.readthedocs.io/}
+
+\bibitem{numpy}
+NumPy Documentation. \url{https://numpy.org/doc/}
+
+\bibitem{pandas}
+Pandas Documentation. \url{https://pandas.pydata.org/docs/}
+
+\bibitem{scipy}
+SciPy Documentation. \url{https://docs.scipy.org/doc/scipy/}
+
+\bibitem{scikit-learn}
+Scikit-learn Documentation. \url{https://scikit-learn.org/stable/documentation.html}
+
+\end{thebibliography}
+
+\section{Appendix}
+
+\end{document}
