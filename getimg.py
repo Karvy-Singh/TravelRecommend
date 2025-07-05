@@ -1,4 +1,5 @@
 import requests
+import os
 
 def is_valid_image_url(url: str) -> bool:
     try:
@@ -9,8 +10,8 @@ def is_valid_image_url(url: str) -> bool:
         return False
 
 def fetch_google_images(query: str, limit: int = 5):
-    API_KEY = "AIzaSyAx0g4SAJmUGgUoU2soXAY0YZmr2_Ia3JE"
-    CX = "b332fc4cf2f664bac"
+    API_KEY = os.getenv("API_KEY")
+    CX =  os.getenv("CX")
     search_url = "https://www.googleapis.com/customsearch/v1"
     params = {
         "q": query,
