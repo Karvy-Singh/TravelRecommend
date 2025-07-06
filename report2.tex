@@ -1,4 +1,4 @@
-\documentclass[12pt,a4paper]{report}
+\documentclass[12pt,a4paper]{article}
 
 %-----------------------------------------------------------------------------%
 %                       Required Packages                                    %
@@ -237,10 +237,12 @@ Sites like MakeMyTrip focus on hotels, prices, journey but we lack sites recomme
 \begin{itemize}
   \item Neovim editor
   \item Python
+  \item HTML,CSS,JavaScript
+  \item GitHub for VCS
       \begin{itemize}
           
             \item flask==2.3.3
-              
+                          
             \item numpy==1.26.4
               
             \item pandas==2.2.2
@@ -256,30 +258,177 @@ Sites like MakeMyTrip focus on hotels, prices, journey but we lack sites recomme
 \section{Weekly Progress Summary}
 \begin{itemize}
 
-  \item Week 1: Foundations of Information Retrieval
+  \item Week 1 (June 9–15): Foundations of Information Retrieval
 Studied IR systems, text preprocessing (tokenization, stopword removal, stemming, lemmatization), inverted index construction, retrieval models (Boolean, Vector Space, TF-IDF), similarity metrics (Cosine, Jaccard, Euclidean), and evaluation metrics (Precision, Recall, F1-score, MAP, NDCG).
 
- \item Week 2: Machine Learning for IR
+ \item Week 2 (June 16–21): Machine Learning for IR
 Explored the role of ML in IR (ranking, classification, recommendations), implemented Naive Bayes for document classification, used Scikit-learn for model building, and studied feature engineering (lexical, semantic, behavioral).
 
- \item Week 3: Learning to Rank and Recommendation Systems
+ \item Week 3 (June 23–29): Learning to Rank and Recommendation Systems
 Learned about learning-to-rank approaches (pointwise, pairwise, listwise), RankNet and LambdaMART, embedding-based retrieval (word/sentence embeddings), and recommendation techniques (content-based, collaborative filtering).
 
-Week 4: Project Week
+\item Week 4 (June 30–5): Project Week
 Built an end-to-end IR+ML system including text preprocessing, TF-IDF ranking, document classification, and evaluation using IR metrics. Integrated concepts from previous weeks into a working prototype.
 \end{itemize}
 
 \newpage
 \section{System Design / Workflow / Architecture}
+\begin{center}
+  \includegraphics[scale=0.3]{workflow.png}\\
 
+\end{center}
+	
 \newpage
 \section{Implementation Details}
 
+\begin{enumerate}
+    \item \textbf{Overview}
+    \begin{itemize}
+        \item A travel recommendation web application built using \textbf{Flask}.
+        \item Uses \textbf{Information Retrieval (IR)} and \textbf{Machine Learning (ML)} for ranked recommendations.
+        \item Supports keyword-based and filter-based search with optional ML-based re-ranking.
+    \end{itemize}
+
+    \item \textbf{Technology Stack}
+    \begin{itemize}
+        \item \textbf{Frontend:} HTML, CSS (Bootstrap), JavaScript
+        \item \textbf{Backend:} Flask (Python)
+        \item \textbf{ML Model:} XGBoost Regressor (\texttt{XGBRegressor})
+        \item \textbf{IR Techniques:} TF-IDF vectorization, Cosine Similarity
+        \item \textbf{Dataset:} 3000+ entries (Kaggle)
+        \item \textbf{Image Search:} Google Programmable Search Engine
+    \end{itemize}
+
+    \item \textbf{Functional Modules}
+    \begin{enumerate}
+        \item \textbf{User Interface}
+        \begin{enumerate}
+            \item \textbf{Search Form (Landing Page)}
+            \begin{itemize}
+                \item Input Fields:
+                \begin{itemize}
+                    \item City, Place, Minimum Rating, Maximum Duration, Month
+                \end{itemize}
+                \item Checkbox: \texttt{Apply Hard Filters}
+                \item IR/ML Settings:
+                \begin{itemize}
+                    \item Keywords (e.g., ``lake'', ``heritage'')
+                    \item Top N Results to retrieve
+                \end{itemize}
+            \end{itemize}
+
+            \item \textbf{Results Page}
+            \begin{itemize}
+                \item Shows top N results ranked by:
+                \begin{itemize}
+                    \item IR-only (TF-IDF + Cosine Similarity)
+                    \item ML re-ranking (predicted rating)
+                \end{itemize}
+                \item Each result includes:
+                \begin{itemize}
+                    \item Place Name, City, Rating, IR Score, ML Score
+                    \item Best Time to Visit, Duration, View Details button
+                \end{itemize}
+                \item Displays evaluation metrics for IR vs IR+ML
+            \end{itemize}
+
+            \item \textbf{Details Page}
+            \begin{itemize}
+                \item Displays:
+                \begin{itemize}
+                    \item Rating, Best Time, Duration, Distance from City
+                    \item 5 Images (via Google Search)
+                    \item City and Place Descriptions
+                    \item Back to Results link
+                \end{itemize}
+            \end{itemize}
+        \end{enumerate}
+    \end{enumerate}
+
+    \item \textbf{Information Retrieval (IR) Pipeline}
+    \begin{itemize}
+        \item \textbf{Vectorization:} TF-IDF on text fields (e.g., name, description)
+        \item \textbf{Similarity:} Cosine similarity between query and dataset entries
+        \item \textbf{Ranking:} Based on similarity scores
+        \item \textbf{Filtering:} Applied if hard filters are enabled:
+        \begin{itemize}
+            \item Filters by city, rating, duration, and month
+        \end{itemize}
+    \end{itemize}
+
+    \item \textbf{Machine Learning (ML) Pipeline}
+    \begin{itemize}
+        \item \textbf{Model:} \texttt{XGBRegressor}
+        \item \textbf{Target:} User rating
+        \item \textbf{Features:}
+        \begin{itemize}
+            \item Place description, City, Month, Duration, TF-IDF vector
+        \end{itemize}
+        \item \textbf{Re-ranking Process:}
+        \begin{itemize}
+            \item Top N IR results fed to ML model
+            \item Model predicts ML score
+            \item Results sorted by predicted ML score
+        \end{itemize}
+    \end{itemize}
+
+    \item \textbf{Evaluation Metrics}
+    \begin{itemize}
+        \item \textbf{NDCG@N:} Measures ranking quality
+        \item \textbf{Precision@N:} Relevance in top-N results
+        \item \textbf{Recall@N:} Coverage of relevant items
+        \item \textbf{MAP@N:} Mean of average precision
+        \item \textbf{F-measure@N:} Harmonic mean of precision and recall
+    \end{itemize}
+
+    \item \textbf{External API Integration}
+    \begin{itemize}
+        \item Google Programmable Search API used to fetch 5 images per place
+        \item Query is constructed using place and city names
+        \item Images displayed on the details page
+    \end{itemize}
+
+    \item \textbf{Navigation Flow}
+    \begin{enumerate}
+        \item Landing Page: Search form submission
+        \item Results Page: Ranked recommendations and metrics
+        \item Details Page: Rich information and images
+        \item Back links to navigate between pages
+    \end{enumerate}
+\end{enumerate}
+
 \newpage
 \section{Screenshots / Code Snapshots / Output Samples}
+\begin{center}
+	\includegraphics[scale=0.5]{ml.png}\\
+	\includegraphics[scale=0.5]{ir+ml.png}\\
+  \includegraphics[scale=0.5]{metrics.png}\\
+	\includegraphics[scale=0.5]{index.png}\\
+	\includegraphics[scale=0.5]{results.png}\\
+	\includegraphics[scale=0.5]{image.png}\\
+	\includegraphics[scale=0.5]{searchplace.png}\\
+  \includegraphics[scale=0.5]{resultspage.png}\\
+	\includegraphics[scale=0.5]{detailpage.png}\\
+\end{center}
 
 \newpage
 \section{Challenges Faced and Solutions}
+\begin{enumerate}
+    \item \textbf{No Rating CSV Available:}  
+    The dataset lacked user-specific ratings for direct supervised training. We addressed this by training an \texttt{XGBRegressor} to predict ratings using extracted features, and used these predicted scores for re-ranking IR results.
+
+    \item \textbf{Missing or Inconsistent Fields:}  
+    Several entries had incomplete data (e.g., duration, best time). We handled this with preprocessing steps such as median imputation, placeholder tokens for text fields, and conditional logic to clean and standardize records.
+
+    \item \textbf{Feature Imbalance (Text vs Numeric):}  
+    TF-IDF features had significantly higher dimensionality compared to numeric ones. We applied numeric scaling and feature engineering to ensure balanced contribution to the ML model.
+
+    \item \textbf{Lack of User Feedback for Evaluation:}  
+    In absence of real user interactions, we used offline evaluation metrics (NDCG@3, Precision@3, etc.) to validate model performance and maintained a modular structure to enable future feedback integration.
+
+  \item \textbf{Google Programmable Search Engine:}
+  It gave us pictures from facebook and instagram which were not available without login and thus on html page there came no pics but alt text, we added a check in the getimg.py file to prevent this from happening by checking if it starts with '/image'.
+\end{enumerate}
 
 \newpage
 \section{Key Learnings}
@@ -321,7 +470,6 @@ Built an end-to-end IR+ML system including text preprocessing, TF-IDF ranking, d
 Over four weeks, we explored the core principles and practical applications of Information Retrieval (IR) and Machine Learning (ML) to build a travel recommendation system that goes beyond conventional platforms like MakeMyTrip. Unlike traditional travel sites that focus mainly on logistics, our system focuses on personalized destination recommendations based on user interests, using techniques like TF-IDF ranking, classification models, and similarity metrics. By integrating IR techniques with ML-driven classification and ranking algorithms, we created a user-friendly prototype that retrieves relevant travel destinations and displays them with images and contextual insights, enhancing user experience and engagement.
 
 \newpage
-\section{References}
 \begin{thebibliography}{6}
 
 \bibitem{Dataset}
@@ -347,6 +495,62 @@ Scikit-learn Documentation. \url{https://scikit-learn.org/stable/documentation.h
 
 \end{thebibliography}
 
+\newpage
 \section{Appendix}
+This appendix includes additional information, datasets, evaluation summaries, and architectural references that support the implementation and evaluation of the Travel Recommendation System.
+
+\section*{A.1 Dataset Overview}
+\begin{itemize}
+    \item \textbf{Source:} Public Kaggle dataset containing 3000+ tourist places across various Indian cities.
+    \item \textbf{Fields Used:} Place name, City, Description, Tags, Best time to visit, Ideal duration, Distance from city, and Ratings.
+    \item \textbf{Preprocessing:} Missing values were handled via imputation or exclusion, and categorical/text data was encoded for IR and ML pipelines.
+\end{itemize}
+
+\section*{A.2 IR and ML Pipeline Configuration}
+\begin{itemize}
+    \item \textbf{Text Vectorization:} TF-IDF on place descriptions and tags.
+    \item \textbf{Similarity Measure:} Cosine similarity used to rank initial results.
+    \item \textbf{Re-ranking Model:} \texttt{XGBRegressor}, trained to predict rating scores.
+    \item \textbf{Top-N Selection:} User-specified value used to limit final output set.
+\end{itemize}
+
+\section*{A.3 Evaluation Metrics}
+\begin{itemize}
+    \item Metrics used for comparing IR-only vs IR+ML ranking:
+    \begin{itemize}
+        \item NDCG@3 (Normalized Discounted Cumulative Gain)
+        \item Precision@3
+        \item Recall@3
+        \item MAP@3 (Mean Average Precision)
+        \item F-Measure@3
+    \end{itemize}
+    \item Evaluation was performed using simulated user relevance rankings across multiple test queries.
+\end{itemize}
+
+\section*{A.4 Example Query Scenarios}
+\begin{enumerate}
+    \item \textbf{Query:} ``lake'' \\
+    \textbf{Filters:} City = Srinagar, Rating $\geq$ 4.0 \\
+    \textbf{Top Results:} Dal Lake, Wular Lake, Nigeen Lake
+
+    \item \textbf{Query:} ``heritage fort'' \\
+    \textbf{Filters:} Duration $\leq$ 2 days \\
+    \textbf{Top Results:} Gwalior Fort, Mehrangarh Fort, Jaisalmer Fort
+\end{enumerate}
+
+\section*{A.5 System Architecture Summary}
+\begin{itemize}
+    \item User mits search via Flask frontend.
+    \item TF-IDF computes cosine similarity scores over the dataset.
+    \item Top-N IR results passed to ML model for re-ranking using predicted ratings.
+    \item Final results rendered with evaluation metrics and a link to a detailed view (images, descriptions, etc.).
+    \item External image data fetched using Google Programmable Search API.
+\end{itemize}
+
+\section*{A.6 Additional Notes}
+\begin{itemize}
+    \item Image API queries were tuned using a combination of place name + city name to ensure quality.
+    \item Backend allows modular extension for user feedback collection and real-time re-training.
+\end{itemize}
 
 \end{document}
