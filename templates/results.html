@@ -1,4 +1,3 @@
-<!-- results.html -->
 <!doctype html>
 <html lang="en">
 <head>
@@ -34,7 +33,7 @@
     <ul class="results-list">
       {% for r in results|sort(attribute='ml_score', reverse=True) %}
       <li>
-        <a class="result-card" href="{{ url_for('detail', result_id=r.id) }}">
+        <a class="result-card" href="{{ request.url_for('detail', result_id=r.id) }}">
           <div class="result-header">
             <strong>{{ r.place }}</strong>
             <span>({{ r.city }})</span>
@@ -60,7 +59,7 @@
       <p><strong>ML‑ranker:</strong> NDCG@{{ metrics.K }} {{ "%.4f"|format(metrics.ml_ndcg) }}, Precision@{{ metrics.K }} {{ "%.4f"|format(metrics.ml_precision) }}, Recall@{{ metrics.K }} {{ "%.4f"|format(metrics.ml_recall) }}, MAP@{{ metrics.K }} {{ "%.4f"|format(metrics.ml_map) }}, F‑Measure@{{ metrics.K }} {{ "%.4f"|format(metrics.ml_F_measure) }}</p>
     </div>
 
-    <a class="back-link" href="{{ url_for('index') }}">← New search</a>
+    <a class="back-link" href="{{ request.url_for('index') }}">← New search</a>
   </div>
 </body>
 </html>
